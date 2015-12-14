@@ -1,0 +1,53 @@
+<html>
+<head>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<style>
+#movie 
+{
+	margin-top:100px;
+	transform: perspective( 1000px ) rotateY( 45deg );
+}
+
+</style>
+</head>
+<body>
+
+
+<video src="http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" id="movie">My movie</video>
+<div style="width:640px;float:right;"><div style="float:right;" onclick="pause()">stop</div>
+<div style="float:left;" onclick="play()">play</div></div>
+
+
+
+<script type="text/javascript">
+var canal = io.connect();
+var myMovie = document.getElementById("movie");
+
+
+function play(){
+	myMovie.play();
+	console.log(myMovie.currentTime);
+	canal.emit('play', myMovie.currentTime);
+}
+
+function pause(){
+	myMovie.pause();
+	console.log(myMovie.currentTime);
+	canal.emit('stop', myMovie.currentTime);
+}
+
+canal.on('playit', function(time){
+	myMovie.currentTime = time;
+	myMovie.play();
+}
+);
+
+canal.on('stopit', function(time){
+	myMovie.currentTime = time;
+	myMovie.pause();
+}
+);
+</script>
+
+</body>
+</html>
